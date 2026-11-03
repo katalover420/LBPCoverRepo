@@ -1,0 +1,174 @@
+using Unity.VisualScripting;
+using UnityEngine;
+using UnityEngine.InputSystem;
+
+public class SackboyController : MonoBehaviour
+{
+    InputAction moveAction;
+    InputAction jumpAction;
+    CharacterController controller;
+
+    bool onGround;
+    public float gravityValue;
+    public float speedValue;
+    public float minJumpHeight;
+    public float maxJumpHeight;
+    public float jumpTimeWindow;
+    float jumpedTime; // same purpose as grounded time but for a jump buffer
+
+   // public float jumpLength; // time of jump
+  //  public float maxJumpLength; // max time of jump...
+    
+    float yVelocity;
+
+    Vector2 moveInput;
+    float yMovement;
+    float xMovement;
+    Vector3 playerVelocity;
+    float groundedTime;
+
+    // AUDIO SFX
+
+    public AudioSource walkingSFX;
+    public AudioSource jumpingSFX;
+    float pitchMinRange = 0.8f;
+    float pitchMaxRange = 1.3f;
+    public enum PlayerStates
+    {
+        moving,
+        jumping,
+        idle
+    }
+    public PlayerStates currentState;
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
+    {
+        moveAction = InputSystem.actions.FindAction("Move");
+        jumpAction = InputSystem.actions.FindAction("Jump");
+        controller = GetComponent<CharacterController>();
+        jumpedTime = -1f;
+        
+    }
+    
+   
+    // Update is called once per frame
+    void Update()
+    {
+
+
+        // MOVING STATE
+
+
+        // JUMPING STATE
+        switch (currentState)
+        {
+            case PlayerStates.moving:
+                MovementFunctions();
+                break;
+            case PlayerStates.jumping:
+                JumpFunctions();
+                break;
+            case PlayerStates.idle:
+                IdleFunctions();
+                break;
+        }
+
+
+
+       moveInput = moveAction.ReadValue<Vector2>();
+        xMovement = moveInput.x;
+        yMovement = moveInput.y;
+        //onGround = controller.isGrounded;
+        
+       Vector3 move = Vector3.ClampMagnitude(new Vector3(xMovement, 0f, yMovement), 1.0f)*speedValue; 
+        //  moveAction.
+        Camera mainCam = Camera.main;
+        move = Quaternion.Euler(0f, mainCam.transform.eulerAngles.y, 0f) * move;
+
+
+        // CHANGING MOVING AND IDLE STATE
+        if (controller.isGrounded && moveInput != new Vector2(0, 0))
+        {
+            Debug.Log("currently moving");
+            currentState = PlayerStates.moving;
+        }
+        if (controller.isGrounded && moveInput == new Vector2(0, 0))
+        {
+            Debug.Log("IDLE");
+            currentState = PlayerStates.idle;
+        }
+
+
+
+        if (jumpAction.WasPressedThisFrame()) /// the float number at the end is coyote time in code!! and not having to do it with colliders
+        {
+            jumpedTime = Time.time; // saves the exact time.time position that u jumped at
+            // speed + max press time 
+        }
+
+        // CHANGING DA JUMPING STATE
+        if (Time.time - jumpedTime < jumpTimeWindow && Time.time - groundedTime < 0.2f)
+        {
+            currentState = PlayerStates.jumping;
+            Debug.Log("JUMPED");
+            walkingSFX.Stop();
+            if (!jumpingSFX.isPlaying)
+            {
+                jumpingSFX.pitch = Random.Range(pitchMinRange, pitchMaxRange);
+                jumpingSFX.Play();
+            }
+            // checks the elapsed time since you last jumped versus the jump buffer and the grounded window
+            yVelocity = Mathf.Sqrt(maxJumpHeight * -2f * gravityValue);
+            groundedTime = -1f; 
+            jumpedTime = -1f;
+        }
+
+        // or just make the player start falling when jump is released
+        if (jumpAction.WasReleasedThisFrame() && yVelocity > 0f)
+        {
+            Debug.Log("SHORT JUMPED");
+
+            // ok so calculate to change to the minimum jump height 
+            float minimumJumpVelocity = Mathf.Sqrt(minJumpHeight * -2f * gravityValue); 
+            
+            if (yVelocity > minimumJumpVelocity)
+            {
+                yVelocity = minimumJumpVelocity;
+            }
+        }
+        if (controller.isGrounded)
+        {
+            groundedTime = Time.time;
+            if (yVelocity < 0f) yVelocity = -2f;
+            // not sure about whats going on here
+            // ooohh making sure u cant spam jump
+        }
+        
+        yVelocity += gravityValue * Time.deltaTime;
+        move.y = yVelocity;
+        controller.Move(move*Time.deltaTime);
+    }
+
+    void MovementFunctions()
+    {
+        if (!walkingSFX.isPlaying)
+        {
+            walkingSFX.pitch = Random.Range(pitchMinRange, pitchMaxRange);
+
+            walkingSFX.Play();
+
+        }
+        //sfx + animations n stuff. no need to put the actual movement handling in here? also ensures that stuff doesnt overlap since the states have to switch.
+    }
+
+    void JumpFunctions()
+    {
+        
+    }
+
+    void IdleFunctions()
+    {
+        walkingSFX.Stop();
+        
+    }
+}
