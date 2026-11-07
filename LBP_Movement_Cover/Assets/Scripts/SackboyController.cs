@@ -1,3 +1,4 @@
+using Unity.Cinemachine;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -7,6 +8,8 @@ public class SackboyController : MonoBehaviour
     InputAction moveAction;
     InputAction jumpAction;
     CharacterController controller;
+    public Animator animator;
+    public CinemachineCamera cam;
 
     bool onGround;
     public float gravityValue;
@@ -14,12 +17,13 @@ public class SackboyController : MonoBehaviour
     public float minJumpHeight;
     public float maxJumpHeight;
     public float jumpTimeWindow;
+    public float rotationSpeed;
     float jumpedTime; // same purpose as grounded time but for a jump buffer
 
    // public float jumpLength; // time of jump
   //  public float maxJumpLength; // max time of jump...
     
-    float yVelocity;
+    public float yVelocity;
 
     Vector2 moveInput;
     float yMovement;
@@ -31,8 +35,8 @@ public class SackboyController : MonoBehaviour
 
     public AudioSource walkingSFX;
     public AudioSource jumpingSFX;
-    float pitchMinRange = 0.8f;
-    float pitchMaxRange = 1.3f;
+    float pitchMinRange = 1.4f;
+    float pitchMaxRange = 1.8f;
     public enum PlayerStates
     {
         moving,
@@ -43,6 +47,7 @@ public class SackboyController : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+
         moveAction = InputSystem.actions.FindAction("Move");
         jumpAction = InputSystem.actions.FindAction("Jump");
         controller = GetComponent<CharacterController>();
@@ -54,7 +59,7 @@ public class SackboyController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        //animator.SetBool("isgrounded", controller.isGrounded);
 
         // MOVING STATE
 
@@ -74,7 +79,7 @@ public class SackboyController : MonoBehaviour
         }
 
 
-
+        Debug.Log(moveInput.ToString());
        moveInput = moveAction.ReadValue<Vector2>();
         xMovement = moveInput.x;
         yMovement = moveInput.y;
@@ -90,11 +95,15 @@ public class SackboyController : MonoBehaviour
         if (controller.isGrounded && moveInput != new Vector2(0, 0))
         {
             Debug.Log("currently moving");
+            animator.SetBool("isgrounded", true);
             currentState = PlayerStates.moving;
+            
         }
         if (controller.isGrounded && moveInput == new Vector2(0, 0))
         {
             Debug.Log("IDLE");
+            animator.SetBool("isgrounded", true);
+
             currentState = PlayerStates.idle;
         }
 
@@ -110,6 +119,8 @@ public class SackboyController : MonoBehaviour
         if (Time.time - jumpedTime < jumpTimeWindow && Time.time - groundedTime < 0.2f)
         {
             currentState = PlayerStates.jumping;
+            
+            
             Debug.Log("JUMPED");
             walkingSFX.Stop();
             if (!jumpingSFX.isPlaying)
@@ -151,6 +162,8 @@ public class SackboyController : MonoBehaviour
 
     void MovementFunctions()
     {
+        animator.SetBool("isrunning", true);
+
         if (!walkingSFX.isPlaying)
         {
             walkingSFX.pitch = Random.Range(pitchMinRange, pitchMaxRange);
@@ -158,17 +171,92 @@ public class SackboyController : MonoBehaviour
             walkingSFX.Play();
 
         }
+
+        // use slerps
+        if (moveInput.x > 0f)
+        {
+            Quaternion targetRotation = Quaternion.Euler(0, -90, 0);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+        }
+        else if (moveInput.x < 0f)
+        {
+            Quaternion targetRotation = Quaternion.Euler(0, 90, 0);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+        }
+        else if (moveInput.y > 0f)
+        {
+            Quaternion targetRotation = Quaternion.Euler(0, 180, 0);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+        }
+        else if (moveInput.y < 0f) 
+        {
+            Quaternion targetRotation = Quaternion.Euler(0, 0, 0);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+
+        }
         //sfx + animations n stuff. no need to put the actual movement handling in here? also ensures that stuff doesnt overlap since the states have to switch.
     }
 
     void JumpFunctions()
     {
-        
+        animator.SetBool("isgrounded", false);
+        if (yVelocity < 0f)
+        {
+            animator.SetBool("isfalling", true);
+        }
+
+
+
+        // also rotate mid air
+
+        if (moveInput.x > 0f)
+        {
+            Quaternion targetRotation = Quaternion.Euler(0, -90, 0);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+        }
+        else if (moveInput.x < 0f)
+        {
+            Quaternion targetRotation = Quaternion.Euler(0, 90, 0);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+        }
+        else if (moveInput.y > 0f)
+        {
+            Quaternion targetRotation = Quaternion.Euler(0, 180, 0);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+        }
+        else if (moveInput.y < 0f)
+        {
+            Quaternion targetRotation = Quaternion.Euler(0, 0, 0);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+
+        }
+
     }
 
     void IdleFunctions()
     {
+        animator.SetBool("isrunning", false);
+
         walkingSFX.Stop();
         
+    }
+
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.tag == "cameraTrigger")
+        {
+            cam = other.GetComponentInParent<CinemachineCamera>();
+            cam.Priority = 10;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.tag == "cameraTrigger")
+        {
+            cam = other.GetComponentInParent<CinemachineCamera>();
+            cam.Priority = 0;
+        }
     }
 }
