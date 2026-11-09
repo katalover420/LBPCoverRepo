@@ -28,20 +28,15 @@ public class DialogueScript : MonoBehaviour, Iinteraction
     {
         Debug.Log("interaction played");
             StartCoroutine(dialogueSpawnCoroutine());
-        if (dialogueSpawnCoroutine() == null)
-        {
-            
-        }
+        
+        
     }
     public void interactionStop()
     {
         Debug.Log("interaction stopped");
 
             StartCoroutine(dialogueExitCoroutine());
-        if (dialogueExitCoroutine() == null)
-        {
-            
-        }
+        
     }
 
     public IEnumerator dialogueSpawnCoroutine()

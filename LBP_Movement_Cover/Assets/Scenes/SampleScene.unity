@@ -3676,8 +3676,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -10.100001, y: 0.7862904, z: -6.01645}
+  m_LocalRotation: {x: 0.0034923658, y: -0.000000019910486, z: 6.953512e-11, w: 0.9999939}
+  m_LocalPosition: {x: -6.955673, y: 1.3481563, z: -9.927215}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -10888,10 +10888,10 @@ MonoBehaviour:
   CameraDistance: 10.3
   DeadZoneDepth: 1117.7
   Composition:
-    ScreenPosition: {x: -0.1495138, y: 0.10518506}
+    ScreenPosition: {x: -0.20493059, y: 0.08419755}
     DeadZone:
       Enabled: 1
-      Size: {x: 0.37875006, y: 0.24407405}
+      Size: {x: 0.09472233, y: 0.24407405}
     HardLimits:
       Enabled: 0
       Size: {x: 1.65, y: 0.82}
@@ -10956,7 +10956,7 @@ Transform:
   m_GameObject: {fileID: 1207874514}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5.88163, y: 1.533884, z: -9.94645}
+  m_LocalPosition: {x: -2.881285, y: 1.196099, z: -9.94645}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -12504,7 +12504,7 @@ MonoBehaviour:
       Size: {x: 1.65, y: 0.82}
       Offset: {x: 0, y: 0}
   CenterOnActivate: 1
-  TargetOffset: {x: 0, y: 0, z: 0}
+  TargetOffset: {x: 0, y: -1.4, z: 0}
   Damping: {x: 1.99, y: 0.2, z: 0}
   Lookahead:
     Enabled: 0
@@ -12563,7 +12563,7 @@ Transform:
   m_GameObject: {fileID: 1404450479}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.8211517, y: 3.95603, z: -9.94645}
+  m_LocalPosition: {x: -3.8211517, y: 2.5560298, z: -9.94645}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -14079,7 +14079,7 @@ MonoBehaviour:
   CameraDistance: 6.37
   DeadZoneDepth: 41.93
   Composition:
-    ScreenPosition: {x: 0, y: 0.08}
+    ScreenPosition: {x: -0.16041668, y: 0.14234576}
     DeadZone:
       Enabled: 1
       Size: {x: 0.15, y: 0.2}
@@ -14089,7 +14089,7 @@ MonoBehaviour:
       Offset: {x: 0, y: 0}
   CenterOnActivate: 1
   TargetOffset: {x: 0, y: 0, z: 0}
-  Damping: {x: 9.35, y: 8.48, z: 1}
+  Damping: {x: 5, y: 8.48, z: 1}
   Lookahead:
     Enabled: 0
     Time: 0
@@ -14109,7 +14109,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineCamera
   Priority:
     Enabled: 1
-    m_Value: 2
+    m_Value: 0
   OutputChannel: 1
   StandbyUpdate: 2
   m_StreamingVersion: 20241001
@@ -14147,7 +14147,7 @@ Transform:
   m_GameObject: {fileID: 1570760600}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -10.100001, y: 0.7862904, z: -6.01645}
+  m_LocalPosition: {x: -7.2613716, y: 1.4068573, z: -6.01645}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -18806,7 +18806,7 @@ MonoBehaviour:
   minJumpHeight: 0.7
   maxJumpHeight: 2
   jumpTimeWindow: 0.1
-  rotationSpeed: 10
+  rotationSpeed: 15
   yVelocity: 0
   walkingSFX: {fileID: 2087497028}
   jumpingSFX: {fileID: 2087497029}
@@ -19811,7 +19811,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraScript
   originalPos: {x: 0, y: 0, z: 0}
-  camera: {fileID: 1207874516}
+  camera: {fileID: 1570760602}
 --- !u!4 &2136585164
 Transform:
   m_ObjectHideFlags: 0
