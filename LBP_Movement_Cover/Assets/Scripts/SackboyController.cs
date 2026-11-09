@@ -159,7 +159,7 @@ public class SackboyController : MonoBehaviour
 
 
         //}
-
+        /// theres probably a better way to do this but this works to transition to falling when running off a ledge 
         if (yVelocity <-4f)
         {
             animator.SetBool("isgrounded", false);
@@ -178,8 +178,8 @@ public class SackboyController : MonoBehaviour
         {
             groundedTime = Time.time;
             if (yVelocity < 0f) yVelocity = -2f;
-            // not sure about whats going on here
-            // ooohh making sure u cant spam jump
+   
+            // making sure u cant spam jump
         }
         
         yVelocity += gravityValue * Time.deltaTime;
