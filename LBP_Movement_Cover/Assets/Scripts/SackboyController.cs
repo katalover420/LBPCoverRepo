@@ -5,6 +5,9 @@ using UnityEngine.InputSystem;
 
 public class SackboyController : MonoBehaviour
 {
+    public bool interactionPressed;
+
+    InputAction interactionAction;
     InputAction moveAction;
     InputAction jumpAction;
     CharacterController controller;
@@ -47,7 +50,7 @@ public class SackboyController : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-
+        interactionAction = InputSystem.actions.FindAction("interaction");
         moveAction = InputSystem.actions.FindAction("Move");
         jumpAction = InputSystem.actions.FindAction("Jump");
         controller = GetComponent<CharacterController>();
@@ -107,8 +110,7 @@ public class SackboyController : MonoBehaviour
             currentState = PlayerStates.idle;
         }
 
-
-
+        
         if (jumpAction.WasPressedThisFrame()) /// the float number at the end is coyote time in code!! and not having to do it with colliders
         {
             jumpedTime = Time.time; // saves the exact time.time position that u jumped at
@@ -147,6 +149,31 @@ public class SackboyController : MonoBehaviour
                 yVelocity = minimumJumpVelocity;
             }
         }
+        // trying to get the player to fall when falling, but ummm not working and controller.isgrounded doesnt work much
+        //if (yVelocity < -4f)
+        //{
+
+        //    animator.SetBool("isrunning", false);
+        //    animator.SetBool("isgrounded", false);
+        //    animator.SetBool("isfalling", true);
+
+
+        //}
+
+        if (yVelocity <-4f)
+        {
+            animator.SetBool("isgrounded", false);
+        }
+        else if (controller.isGrounded)
+        {
+            animator.SetBool("isgrounded", true);
+        }
+        //else if (yVelocity >-4f && controller.isGrounded)
+        //{
+        //    //nimator.SetBool("isfalling", false);
+        //    //nimator.SetBool("isfalling", false);
+
+        //}
         if (controller.isGrounded)
         {
             groundedTime = Time.time;
@@ -158,6 +185,12 @@ public class SackboyController : MonoBehaviour
         yVelocity += gravityValue * Time.deltaTime;
         move.y = yVelocity;
         controller.Move(move*Time.deltaTime);
+
+
+
+
+        // INTERACTION PRESS
+       
     }
 
     void MovementFunctions()
@@ -246,7 +279,10 @@ public class SackboyController : MonoBehaviour
     {
         if (other.tag == "cameraTrigger")
         {
-            cam = other.GetComponentInParent<CinemachineCamera>();
+            //Transform sackboyPos = transform;
+            CameraScript camScript = other.GetComponentInParent<CameraScript>();
+            cam = camScript.camera;          //  cam.PreviousStateIsValid = false;
+           // cam.Follow = sackboyPos;
             cam.Priority = 10;
         }
     }
@@ -255,8 +291,13 @@ public class SackboyController : MonoBehaviour
     {
         if (other.tag == "cameraTrigger")
         {
-            cam = other.GetComponentInParent<CinemachineCamera>();
+            CameraScript camScript = other.GetComponentInParent<CameraScript>();
+            cam = camScript.camera;
+            //cam.transform.position = camScript.originalPos;
+            //cam.Follow = null;
             cam.Priority = 0;
+           
+          //  cam = null;
         }
     }
 }

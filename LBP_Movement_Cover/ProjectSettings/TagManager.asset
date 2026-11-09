@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 3
   tags:
   - cameraTrigger
+  - interaction
   layers:
   - Default
   - TransparentFX
